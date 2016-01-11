@@ -6,7 +6,13 @@ zipfile <- "./power.zip"
 download.file(fileURL, destfile=zipfile, method="curl")
 unzip(zipfile)
 datafile <- "household_power_consumption.txt"
-mydf <- read.csv(datafile, header=TRUE, sep=";", stringsAsFactors=FALSE, nrows=100000,colClasses=c("character","character","numeric","numeric","numeric","numeric","numeric","numeric","numeric"), na.strings=c("?"))
+mydf <- read.csv(datafile, 
+                 header=TRUE, 
+                 sep=";", 
+                 stringsAsFactors=FALSE, 
+                 nrows=100000,
+                 colClasses=c("character","character","numeric","numeric","numeric","numeric","numeric","numeric","numeric"), 
+                 na.strings=c("?"))
 
 # Create a new column with correctly formatted date/time
 library(lubridate)
@@ -18,6 +24,7 @@ mydf3 <- subset(mydf2, datetime > date1 & datetime < date2)
 
 # Graph the histogram (this plots to the screen)
 hist(mydf3$Global_active_power,xlab="Global Active Power (kilowatts)",ylab="Frequency",col="red",breaks=10,main="Global Active Power")
+
 # Copy the histogram to a file
 dev.copy(png,"ExDataCP1Plot1.png")
 dev.off()
