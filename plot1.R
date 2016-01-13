@@ -1,6 +1,10 @@
 # Plot 1
 
-# Fetch the data and subset just the part that we want to plot
+# Needed libraries
+library(lubridate)
+library(dplyr)
+
+# Fetch the data set
 fileURL <- "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip"
 zipfile <- "./power.zip"
 download.file(fileURL, destfile=zipfile, method="curl")
@@ -14,17 +18,16 @@ mydf <- read.csv(datafile,
                  colClasses=c("character","character","numeric","numeric","numeric","numeric","numeric","numeric","numeric"), 
                  na.strings=c("?"))
 
-# Create a new column with correctly formatted date/time
-library(lubridate)
-library(dplyr)
-mydf2 <- mutate(mydf, datetime=parse_date_time(paste(mydf$Date,mydf$Time),orders="dmy hms"))
-date1 <- as.POSIXct(strptime(c("2007-02-01 00:00:00"), "%Y-%m-%d %H:%M:%S"))
-date2 <- as.POSIXct(strptime(c("2007-02-03 00:00:00"), "%Y-%m-%d %H:%M:%S"))
-mydf3 <- subset(mydf2, datetime > date1 & datetime < date2)
+# Subset just the rows we want to plot
+subdf <- subset(mydf, Date=="1/2/2007" | Date=="2/2/2007")
 
-# Graph the histogram (this plots to the screen)
-hist(mydf3$Global_active_power,xlab="Global Active Power (kilowatts)",ylab="Frequency",col="red",breaks=10,main="Global Active Power")
+# Create a new column with correctly formatted date/time
+subdf <- mutate(subdf, datetime=parse_date_time(paste(subdf$Date,subdf$Time),orders="dmy hms"))
 
 # Copy the histogram to a file
-dev.copy(png,"ExDataCP1Plot1.png")
+# Use png() so we can set the pixel size
+png(filename="ExDataCP1Plot1.png", width=480, height=480, units="px")
+hist(subdf$Global_active_power,xlab="Global Active Power (kilowatts)",ylab="Frequency",col="red",main="Global Active Power")
+
+# Done plotting, close device
 dev.off()
